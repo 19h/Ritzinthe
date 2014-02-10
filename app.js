@@ -3,8 +3,6 @@
 var cluster = require("cluster"),
     numCPUs = require("os").cpus().length;
 
-var init = Date.now();
-
 var  http = require("http"),
 httpProxy = require("http-proxy");
 
@@ -26,7 +24,8 @@ var worker = function (cb) {
 
 		Object.keys(routes).forEach(function (v) {
 			routeCache[v] = httpProxy.createProxyServer({
-	                        target: routes[v]
+	                        target: routes[v],
+	                        ws: routes[v].substr(0, 3) === "ws:"
 	                });
 		})
 
