@@ -34,7 +34,7 @@ var worker = function (cb) {
 				return routeCache[request.host].web(request, response);
 
 			routeCache["default"].web(request, response);
-		})
+		}).listen(80);
 
 	// Notify cluster that this
 	// instance is running
