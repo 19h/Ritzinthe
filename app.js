@@ -1,10 +1,12 @@
 #!/usr/local/bin/node
 
 var cluster = require("cluster"),
-var numCPUs = require("os").cpus().length;
+    numCPUs = require("os").cpus().length;
 
-var http = require("http");
-var httpProxy = require("http-proxy");
+var init = Date.now();
+
+var  http = require("http"),
+httpProxy = require("http-proxy");
 
 var routes = {
 	// Structure:
@@ -35,29 +37,33 @@ var worker = function (cb) {
 
 			routeCache["default"].web(request, response);
 		}).listen(80);
-
-	// Notify cluster that this
-	// instance is running
-	cb();
 }
 
-if (cluster.isMaster) {
-	_master();
-	
-	var init = process.hrtime();
-	var child = cluster.fork();
+if ( cluster.isMaster ) {
+	var init = Date.now();
+
+	console.log("Spawning..");
+
+	for (var i = 0; i < numCPUs; i++) {
+		cluster.fork();
+	}
+
+	cluster.on("online", function(worker) {
+		console.log("\t[" + worker.process.pid + "] Worker online. [" + (Date.now() - init) + "]");
+	});
+
+	cluster.on("disconnect", function(worker) {
+		console.log("\t[" + worker.process.pid + "] Worker disconnected.");
+		console.log("\tRespawning..");
+		cluster.fork();
+	});
 
 	cluster.on("exit", function(worker, code, signal) {
-		if ( worker.suicide ) return;
-
 		var exitCode = worker.process.exitCode;
 		console.log("\t[" + worker.process.pid + "] Worker died. (" + exitCode + ")");
 		console.log("\tRespawning..");
 		cluster.fork();
 	});
 } else {
-	console.log("Spawning..");
-	worker(function () {
-		console.log("\t[" + process.pid + "] Worker online. [" + _hr_mutate(init) + "]");
-	});
+	worker();
 }
