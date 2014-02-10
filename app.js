@@ -51,6 +51,8 @@ var worker = function (cb) {
 		server.on("upgrade", function (request, socket, head) {
 			if ( websocketRoutes[request.host] )
 				return websocketRouteCache[request.host].ws(req, socket, head);
+
+			return socket.end();
 		})
 }
 
