@@ -1,0 +1,27 @@
+{
+      "name": "Ritzinthe",
+      "version": "0.0.1",
+      "author": "Kenan Sulayman",
+      "description": "Simple, Clustered HTTP Proxy",
+      "contributors": [
+            {
+                  "name": "Kenan Sulayman",
+                  "email": "kenan@sly.mn"
+            }
+      ],
+      "bin": {
+            "ritzinthe": "./app.js"
+      },
+      "scripts": {
+            "start": "node ./app.js",
+      },
+      "main": "./app.js",
+      "repository": {
+            "type": "git",
+            "url": "https://github.com/KenanSulayman/Ritzinthe.git"
+      },
+      "private": true,
+      "dependencies": {
+            "http-proxy": "*"
+      }
+}
