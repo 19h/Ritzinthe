@@ -19,7 +19,7 @@ var routes = {
 };
 
 var websocketRoutes = {
-	"test.com": "http://127.0.0.1:1234"
+	"test.com": "ws://127.0.0.1:1234"
 }
 
 var worker = function (cb) {
