@@ -18,24 +18,40 @@ var routes = {
 	"default": "http://127.0.0.1:81"
 };
 
+var websocketRoutes = {
+	"test.com": "http://127.0.0.1:1234"
+}
+
 var worker = function (cb) {
 	// Initialize routes
 		var routeCache = {};
+		var websocketRouteCache = {};
 
 		Object.keys(routes).forEach(function (v) {
 			routeCache[v] = httpProxy.createProxyServer({
+	                        target: routes[v]
+	                });
+		})
+
+		Object.keys(websocketRoutes).forEach(function (v) {
+			websocketRouteCache[v] = httpProxy.createProxyServer({
 	                        target: routes[v],
-	                        ws: routes[v].substr(0, 3) === "ws:"
+	                        ws: true
 	                });
 		})
 
 	// Create Router
-		http.createServer(function (request, response) {
+		var server = http.createServer(function (request, response) {
 			if ( routes[request.host] )
 				return routeCache[request.host].web(request, response);
 
 			routeCache["default"].web(request, response);
 		}).listen(80);
+
+		server.on("upgrade", function (request, socket, head) {
+			if ( websocketRoutes[request.host] )
+				return websocketRouteCache[request.host].ws(req, socket, head);
+		})
 }
 
 if ( cluster.isMaster ) {
