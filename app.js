@@ -4,7 +4,9 @@ var cluster = require("cluster"),
 var numCPUs = require("os").cpus().length;
 
 var worker = function (cb) {
-	var 
+
+
+	cb();
 }
 
 if (cluster.isMaster) {
@@ -22,24 +24,8 @@ if (cluster.isMaster) {
 		cluster.fork();
 	});
 } else {
-	var init = process.hrtime(), _repl = void 0;
-
-	_drpl = function () {
-		process.env["dev"] && (_repl=require("repl").start({
-			prompt: "libLegify> ",
-			input: process.stdin,
-			output: process.stdout
-		}));
-	};
-
-	exit = function () {
-		process.exit();
-	}
-
 	console.log("Spawning..");
 	worker(function () {
 		console.log("\t[" + process.pid + "] Worker online. [" + _hr_mutate(init) + "]");
-
-		_drpl ();
 	});
 }
